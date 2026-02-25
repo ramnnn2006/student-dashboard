@@ -3,7 +3,7 @@
 
 **Website Name:** VITrack  
 **Developed By:** OxygenEnjoyer & Ramandotpy  
-**Course:** Web Development Course  
+**Course:** Web Development Course ( BCSE203E )
 
 ## 📌 Overview  
 
