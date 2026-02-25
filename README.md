@@ -5,15 +5,11 @@
 **Developed By:** OxygenEnjoyer & Ramandotpy  
 **Course:** Web Development Course  
 
----
-
 ## 📌 Overview  
 
 **VITrack** is a comprehensive Student Outcome and Alumni Tracking Dashboard designed to help educational institutions efficiently monitor student progress and maintain meaningful connections with alumni.
 
 The platform centralizes academic records, career outcomes, and alumni engagement data into a single, easy-to-use dashboard. It enables administrators to track performance trends, measure institutional impact, and strengthen alumni networks.
-
----
 
 ## 🚀 Key Features  
 
@@ -31,8 +27,6 @@ The platform centralizes academic records, career outcomes, and alumni engagemen
 
 - 🔐 **User-Friendly Interface**  
   Designed with simplicity and accessibility in mind.
-
----
 
 
 ## 📷 Screenshots  
