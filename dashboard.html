@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VITrack - Student Dashboard</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+    <!-- Chart.js for the GPA Graph -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        .dashboard-container {
+            padding: 3rem 5%;
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 900px) {
+            .dashboard-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .dash-card {
+            background: var(--bg-card);
+            border-radius: 15px;
+            padding: 2rem;
+            border: 1px solid var(--glass-border);
+            margin-bottom: 2rem;
+        }
+
+        .dash-card h2 {
+            margin-bottom: 1.5rem;
+            font-size: 1.4rem;
+            color: var(--accent-blue);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Profile details */
+        .profile-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .profile-img {
+            width: 100px;
+            height: 100px;
+            background: var(--accent-purple);
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+
+        .cgpa-display {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(16, 185, 129, 0.05));
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            padding: 1.5rem;
+            text-align: center;
+            border-radius: 12px;
+            margin-top: 1rem;
+        }
+
+        .cgpa-display h3 {
+            font-size: 2.5rem;
+            color: var(--accent-green);
+            margin: 0;
+            line-height: 1;
+        }
+
+        .cgpa-display p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        .admin-notice {
+            font-size: 0.8rem;
+            color: var(--accent-pink);
+            text-align: center;
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+        }
+
+        /* Course List */
+        .course-list {
+            list-style: none;
+        }
+
+        .course-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 8px;
+            margin-bottom: 0.8rem;
+            border-left: 3px solid var(--accent-purple);
+        }
+
+        .course-info h4 {
+            color: var(--text-main);
+            margin-bottom: 0.2rem;
+        }
+
+        .course-info p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .course-credits {
+            background: var(--accent-blue);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fa-solid fa-graduation-cap"></i>
+            <span>VITrack</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="dashboard.html" class="active">Dashboard</a></li>
+            <li><a href="alumni.html">Alumni</a></li>
+            <li><a href="#">Placements</a></li>
+        </ul>
+        <div class="nav-actions">
+            <!-- Login temporarily removed for test user -->
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+
+        <!-- Left Column: Profile & CGPA -->
+        <div class="dash-column">
+            <div class="dash-card">
+                <div class="profile-header">
+                    <div class="profile-img">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                    <h2>Test Alumni</h2>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">B.Tech Computer Science (2025)</p>
+                </div>
+
+                <div class="cgpa-display">
+                    <h3>8.92</h3>
+                    <p>Final Graduation CGPA</p>
+                </div>
+
+                <div class="admin-notice">
+                    <i class="fa-solid fa-lock"></i>
+                    <span>Records locked. Editable by Administration only.</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Graph & Courses -->
+        <div class="dash-column">
+
+            <!-- Graph Card -->
+            <div class="dash-card">
+                <h2><i class="fa-solid fa-chart-line"></i> Semester GPA Progress</h2>
+                <div style="height: 300px; width: 100%;">
+                    <canvas id="gpaChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Courses List Card -->
+            <div class="dash-card">
+                <h2><i class="fa-solid fa-book"></i> Enrolled Courses History</h2>
+                <ul class="course-list">
+                    <li class="course-item">
+                        <div class="course-info">
+                            <h4>Data Structures and Algorithms</h4>
+                            <p>Code: CST1001 • Semester 3</p>
+                        </div>
+                        <div class="course-credits">4 Credits</div>
+                    </li>
+                    <li class="course-item">
+                        <div class="course-info">
+                            <h4>Database Management Systems</h4>
+                            <p>Code: CST1002 • Semester 4</p>
+                        </div>
+                        <div class="course-credits">3 Credits</div>
+                    </li>
+                    <li class="course-item">
+                        <div class="course-info">
+                            <h4>Computer Networks</h4>
+                            <p>Code: CST1003 • Semester 5</p>
+                        </div>
+                        <div class="course-credits">4 Credits</div>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Initialize Chart.js Graph -->
+    <script>
+        const ctx = document.getElementById('gpaChart').getContext('2d');
+
+        // Gradient for the bar chart
+        const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+        gradient.addColorStop(0, 'rgba(59, 130, 246, 0.8)'); // Blue accent
+        gradient.addColorStop(1, 'rgba(139, 92, 246, 0.8)'); // Purple accent
+
+        const gpaChart = new Chart(ctx, {
+            type: 'bar', // Using Bar chart as requested for a mix of Bar/Line
+            data: {
+                labels: ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4', 'Sem 5', 'Sem 6', 'Sem 7', 'Sem 8'],
+                datasets: [
+                    {
+                        type: 'line',
+                        label: 'Cumulative GPA Trend',
+                        data: [8.5, 8.6, 8.75, 8.7, 8.8, 8.85, 8.9, 8.92],
+                        borderColor: '#ec4899', // Pink accent
+                        borderWidth: 3,
+                        pointBackgroundColor: '#ec4899',
+                        pointHoverRadius: 6,
+                        fill: false,
+                        tension: 0.4
+                    },
+                    {
+                        type: 'bar',
+                        label: 'Semester GPA',
+                        data: [8.5, 8.7, 8.9, 8.6, 8.95, 9.0, 9.1, 9.2],
+                        backgroundColor: gradient,
+                        borderRadius: 6,
+                        borderWidth: 0
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        min: 6.0,
+                        max: 10.0,
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.05)'
+                        },
+                        ticks: {
+                            color: '#94a3b8'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            color: '#94a3b8'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#f8fafc',
+                            font: {
+                                family: "'Poppins', sans-serif"
+                            }
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                        titleFont: { family: "'Poppins', sans-serif" },
+                        bodyFont: { family: "'Poppins', sans-serif" },
+                        padding: 12,
+                        cornerRadius: 8
+                    }
+                }
+            }
+        });
+    </script>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-bottom" style="border-top: none; padding-top: 0;">
+            <p>&copy; 2026 VITrack Dashboard. Built with creativity.</p>
+        </div>
+    </footer>
+</body>
+
+</html>
