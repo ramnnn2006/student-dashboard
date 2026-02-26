@@ -90,7 +90,10 @@ button {
     padding: 1.5rem 5%;
     background: rgba(0, 0, 0, 0.8);
     backdrop-filter: blur(10px);
-    border-bottom: 1px solid var(--glass-border);
+    border-bottom: 1px solid rgba(0, 92, 255, 0.3);
+    /* Cobalt border */
+    box-shadow: 0 4px 30px rgba(0, 92, 255, 0.15);
+    /* Cobalt glow */
     position: sticky;
     top: 0;
     z-index: 100;
@@ -106,6 +109,8 @@ button {
 
 .logo i {
     color: var(--accent-purple);
+    /* Cobalt */
+    text-shadow: 0 0 10px rgba(0, 92, 255, 0.4);
     font-size: 1.8rem;
 }
 
@@ -123,6 +128,8 @@ button {
 .nav-links li a.active,
 .nav-links li a:hover {
     color: var(--accent-blue);
+    text-shadow: 0 0 8px rgba(0, 168, 255, 0.5);
+    /* Cyan glow */
 }
 
 
@@ -151,6 +158,7 @@ button {
     background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 20px rgba(0, 92, 255, 0.3);
 }
 
 .hero-content p {
@@ -194,8 +202,10 @@ button {
     gap: 1rem;
     z-index: 2;
     background: linear-gradient(135deg, rgba(20, 20, 20, 0.9), rgba(0, 0, 0, 0.9));
-    border-top: 1px solid rgba(255, 255, 255, 0.2);
-    border-left: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(0, 92, 255, 0.3);
+    /* Cobalt edge highlight */
+    box-shadow: 0 0 40px rgba(0, 92, 255, 0.15);
+    /* Cobalt ambient glow */
 }
 
 .main-glass i {
