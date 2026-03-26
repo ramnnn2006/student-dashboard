@@ -54,6 +54,10 @@
             margin-bottom: 2rem;
         }
 
+        .profile-header h2 {
+            justify-content: center;
+        }
+
         .profile-img {
             width: 100px;
             height: 100px;
@@ -102,6 +106,27 @@
         /* Course List */
         .course-list {
             list-style: none;
+            max-height: 500px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .course-list::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .course-list::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+        }
+
+        .course-list::-webkit-scrollbar-thumb {
+            background: rgba(0, 92, 255, 0.5);
+            border-radius: 4px;
+        }
+
+        .course-list::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-purple);
         }
 
         .course-item {
@@ -216,11 +241,6 @@
                     <h3 id="userCgpa">--</h3>
                     <p>Current CGPA</p>
                 </div>
-
-                <div class="admin-notice">
-                    <i class="fa-solid fa-lock"></i>
-                    <span>Records locked. Editable by Administration only.</span>
-                </div>
                 <button onclick="logout()"
                     style="width: 100%; margin-top: 1.5rem; padding: 0.8rem; background: transparent; border: 1px solid var(--accent-pink); color: var(--accent-pink); border-radius: 8px; cursor: pointer; transition: all 0.3s;"
                     onmouseover="this.style.background='rgba(236, 72, 153, 0.1)'"
@@ -233,9 +253,9 @@
         <div class="dash-column">
 
 
-            <div class="dash-card">
+            <div class="dash-card" style="margin-bottom: 1rem;">
                 <h2><i class="fa-solid fa-chart-line"></i> Semester GPA Progress</h2>
-                <div style="height: 300px; width: 100%;">
+                <div style="height: 200px; width: 100%;">
                     <canvas id="gpaChart"></canvas>
                 </div>
             </div>
