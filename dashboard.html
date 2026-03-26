@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="style.css">
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="data.js"></script>
 
     <style>
         .dashboard-container {
@@ -132,10 +133,54 @@
             font-size: 0.85rem;
             font-weight: bold;
         }
+
+        /* Page Loader */
+        .page-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-main);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent-blue);
+            transition: opacity 0.5s ease;
+        }
+
+        .spinner {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            animation: spin 1s linear infinite;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .page-loader h2 {
+            font-family: 'Poppins', sans-serif;
+            color: var(--text-main);
+            letter-spacing: 1px;
+        }
     </style>
 </head>
 
 <body>
+
+    <div id="pageLoader" class="page-loader">
+        <i class="fa-solid fa-circle-notch spinner"></i>
+        <h2>Fetching Student Records...</h2>
+    </div>
 
     <nav class="navbar">
         <div class="logo">
@@ -146,14 +191,14 @@
             <li><a href="index.html">Home</a></li>
             <li><a href="dashboard.html" class="active">Dashboard</a></li>
             <li><a href="alumni.html">Alumni</a></li>
-            <li><a href="#">Placements</a></li>
+            <li><a href="#">Mails</a></li>
         </ul>
         <div class="nav-actions">
 
         </div>
     </nav>
 
-    <div class="dashboard-container">
+    <div class="dashboard-container animate-slide-up">
 
 
         <div class="dash-column">
@@ -162,19 +207,25 @@
                     <div class="profile-img">
                         <i class="fa-solid fa-user"></i>
                     </div>
-                    <h2>Test</h2>
-                    <p style="color: var(--text-muted); font-size: 0.9rem;">B.Tech Computer Science (2025)</p>
+                    <h2 id="userName">Loading...</h2>
+                    <p id="userProgram" style="color: var(--text-muted); font-size: 0.9rem;">Loading...</p>
+                    <p id="userRegNo" style="color: var(--text-muted); font-size: 0.8rem; margin-top: 0.2rem;"></p>
                 </div>
 
                 <div class="cgpa-display">
-                    <h3>8.92</h3>
-                    <p>Final Graduation CGPA</p>
+                    <h3 id="userCgpa">--</h3>
+                    <p>Current CGPA</p>
                 </div>
 
                 <div class="admin-notice">
                     <i class="fa-solid fa-lock"></i>
                     <span>Records locked. Editable by Administration only.</span>
                 </div>
+                <button onclick="logout()"
+                    style="width: 100%; margin-top: 1.5rem; padding: 0.8rem; background: transparent; border: 1px solid var(--accent-pink); color: var(--accent-pink); border-radius: 8px; cursor: pointer; transition: all 0.3s;"
+                    onmouseover="this.style.background='rgba(236, 72, 153, 0.1)'"
+                    onmouseout="this.style.background='transparent'"><i
+                        class="fa-solid fa-arrow-right-from-bracket"></i> Logout</button>
             </div>
         </div>
 
@@ -192,28 +243,8 @@
 
             <div class="dash-card">
                 <h2><i class="fa-solid fa-book"></i> Enrolled Courses History</h2>
-                <ul class="course-list">
-                    <li class="course-item">
-                        <div class="course-info">
-                            <h4>Web Development Course</h4>
-                            <p>Code: BCSE203E • Semester 3</p>
-                        </div>
-                        <div class="course-credits">3 Credits</div>
-                    </li>
-                    <li class="course-item">
-                        <div class="course-info">
-                            <h4>Database Management Systems</h4>
-                            <p>Code: BCSE205L • Semester 3</p>
-                        </div>
-                        <div class="course-credits">3 Credits</div>
-                    </li>
-                    <li class="course-item">
-                        <div class="course-info">
-                            <h4>Python Programming</h4>
-                            <p>Code: BCSE102E • Semester 1</p>
-                        </div>
-                        <div class="course-credits">4 Credits</div>
-                    </li>
+                <ul class="course-list" id="courseList">
+                    <!-- Dynamic courses will be injected here -->
                 </ul>
             </div>
 
@@ -222,82 +253,158 @@
 
 
     <script>
-        const ctx = document.getElementById('gpaChart').getContext('2d');
+        document.addEventListener('DOMContentLoaded', () => {
+            const activeUserRegNo = localStorage.getItem('vitrack_active_user');
 
+            if (!activeUserRegNo) {
+                // Not logged in
+                window.location.href = 'login.html';
+                return;
+            }
 
-        const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-        gradient.addColorStop(0, 'rgba(0, 168, 255, 0.8)');
-        gradient.addColorStop(1, 'rgba(0, 92, 255, 0.8)');
+            const user = getUserByRegNo(activeUserRegNo);
 
-        const gpaChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4', 'Sem 5', 'Sem 6', 'Sem 7', 'Sem 8'],
-                datasets: [
-                    {
-                        type: 'line',
-                        label: 'Cumulative GPA Trend',
-                        data: [8.5, 8.6, 8.75, 8.7, 8.8, 8.85, 8.9, 8.92],
-                        borderColor: '#ec4899',
-                        borderWidth: 3,
-                        pointBackgroundColor: '#ec4899',
-                        pointHoverRadius: 6,
-                        fill: false,
-                        tension: 0.4
-                    },
-                    {
-                        type: 'bar',
-                        label: 'Semester GPA',
-                        data: [8.5, 8.7, 8.9, 8.6, 8.95, 9.0, 9.1, 9.2],
-                        backgroundColor: gradient,
-                        borderRadius: 6,
-                        borderWidth: 0
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: false,
-                        min: 6.0,
-                        max: 10.0,
-                        grid: {
-                            color: 'rgba(255, 255, 255, 0.05)'
+            if (!user) {
+                // User not found in mock DB (maybe deleted)
+                localStorage.removeItem('vitrack_active_user');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Populate Profile Data
+            document.getElementById('userName').textContent = user.name;
+            document.getElementById('userProgram').textContent = `${user.program} (${user.graduationYear})`;
+            document.getElementById('userRegNo').textContent = user.registerNumber;
+            document.getElementById('userCgpa').textContent = user.cgpa.toFixed(2);
+
+            // Populate Courses
+            const courseList = document.getElementById('courseList');
+            courseList.innerHTML = ''; // Clear default
+            if (user.courses && user.courses.length > 0) {
+                user.courses.forEach(course => {
+                    const li = document.createElement('li');
+                    li.className = 'course-item';
+                    li.innerHTML = `
+                        <div class="course-info">
+                            <h4>${course.name}</h4>
+                            <p>Code: ${course.code} • Semester ${course.sem}</p>
+                        </div>
+                        <div class="course-credits">${course.credits} Credits</div>
+                    `;
+                    courseList.appendChild(li);
+                });
+            } else {
+                courseList.innerHTML = '<li class="course-item"><p style="color: var(--text-muted)">No enrolled courses found.</p></li>';
+            }
+
+            // Initialize Chart
+            const ctx = document.getElementById('gpaChart').getContext('2d');
+            const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+            gradient.addColorStop(0, 'rgba(0, 168, 255, 0.8)');
+            gradient.addColorStop(1, 'rgba(0, 92, 255, 0.8)');
+
+            // Prepare dynamic labels based on number of semesters with data
+            const labels = [];
+            const semGpaData = user.semesterGpa || [];
+            for (let i = 1; i <= semGpaData.length; i++) {
+                labels.push(`Sem ${i}`);
+            }
+
+            // Calculate cumulative GPA trend for line chart roughly
+            let cumulativeData = [];
+            let sum = 0;
+            for (let i = 0; i < semGpaData.length; i++) {
+                sum += semGpaData[i];
+                cumulativeData.push((sum / (i + 1)).toFixed(2));
+            }
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            type: 'line',
+                            label: 'Cumulative GPA Trend',
+                            data: cumulativeData,
+                            borderColor: '#ec4899',
+                            borderWidth: 3,
+                            pointBackgroundColor: '#ec4899',
+                            pointHoverRadius: 6,
+                            fill: false,
+                            tension: 0.4
                         },
-                        ticks: {
-                            color: '#94a3b8'
+                        {
+                            type: 'bar',
+                            label: 'Semester GPA',
+                            data: semGpaData,
+                            backgroundColor: gradient,
+                            borderRadius: 6,
+                            borderWidth: 0
                         }
-                    },
-                    x: {
-                        grid: {
-                            display: false
-                        },
-                        ticks: {
-                            color: '#94a3b8'
-                        }
-                    }
+                    ]
                 },
-                plugins: {
-                    legend: {
-                        labels: {
-                            color: '#f8fafc',
-                            font: {
-                                family: "'Poppins', sans-serif"
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            min: 6.0,
+                            max: 10.0,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.05)'
+                            },
+                            ticks: {
+                                color: '#94a3b8'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                color: '#94a3b8'
                             }
                         }
                     },
-                    tooltip: {
-                        backgroundColor: 'rgba(10, 10, 10, 0.9)',
-                        titleFont: { family: "'Poppins', sans-serif" },
-                        bodyFont: { family: "'Poppins', sans-serif" },
-                        padding: 12,
-                        cornerRadius: 8
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#f8fafc',
+                                font: {
+                                    family: "'Poppins', sans-serif"
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(10, 10, 10, 0.9)',
+                            titleFont: { family: "'Poppins', sans-serif" },
+                            bodyFont: { family: "'Poppins', sans-serif" },
+                            padding: 12,
+                            cornerRadius: 8
+                        }
                     }
                 }
+            });
+
+            // Simulate DB fetching delay conditionally
+            const loader = document.getElementById('pageLoader');
+            if (localStorage.getItem('vitrack_show_loader') === 'true') {
+                localStorage.removeItem('vitrack_show_loader');
+                setTimeout(() => {
+                    loader.style.opacity = '0';
+                    setTimeout(() => loader.style.display = 'none', 500); // Wait for transition
+                }, 1200);
+            } else {
+                loader.style.display = 'none';
             }
         });
+
+        function logout() {
+            localStorage.removeItem('vitrack_active_user');
+            window.location.href = 'index.html';
+        }
     </script>
 
 

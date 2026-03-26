@@ -27,21 +27,25 @@
             <li><a href="index.html" class="active">Home</a></li>
             <li><a href="dashboard.html">Dashboard</a></li>
             <li><a href="alumni.html">Alumni</a></li>
-            <li><a href="#">Placements</a></li>
+            <li><a href="#">Mails</a></li>
         </ul>
         <div class="nav-actions">
-
+            <a href="login.html" id="authBtn" class="btn btn-outline"
+                style="border: 1px solid var(--accent-blue); color: var(--accent-blue); text-decoration: none; padding: 0.5rem 1rem; border-radius: 8px; transition: all 0.3s; display: inline-block;">
+                <i class="fa-solid fa-fingerprint"></i> Login
+            </a>
         </div>
     </nav>
 
 
-    <header class="hero">
+    <header class="hero animate-slide-up">
         <div class="hero-content">
             <h1>Still with you with <span>VITrack</span></h1>
             <p>Your centralized dashboard for student outcome tracking, placement analytics, and building a strong
                 alumni network.</p>
             <div class="hero-buttons">
-                <button class="btn-primary"><i class="fa-solid fa-chart-line"></i> View Dashboard</button>
+                <button class="btn-primary" onclick="window.location.href='dashboard.html'"><i
+                        class="fa-solid fa-chart-line"></i> View Dashboard</button>
                 <button class="btn-secondary" onclick="window.location.href='alumni.html'">Explore Alumni</button>
             </div>
         </div>
@@ -73,6 +77,21 @@
             <p>&copy; 2026 Project for Web-Development course by Dr Suvidha Rupesh Kumar.</p>
         </div>
     </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const activeUser = localStorage.getItem('vitrack_active_user');
+            const authBtn = document.getElementById('authBtn');
+
+            if (activeUser && authBtn) {
+                authBtn.innerHTML = '<i class="fa-solid fa-user"></i> Dashboard';
+                authBtn.href = 'dashboard.html';
+                authBtn.style.color = 'var(--text-main)';
+                authBtn.style.borderColor = 'var(--glass-border)';
+                authBtn.style.background = 'rgba(255, 255, 255, 0.05)';
+            }
+        });
+    </script>
 </body>
 
 </html>
